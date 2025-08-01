@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { clsx } from 'clsx';
 import data from "./languages.js"
-import getFarewellText from "./utils.js"
+import {getFarewellText, getRandomWord} from "./utils.js"
+import Confetti from "react-confetti"
 
 export default function AssemblyEndgame() {
-    const [currentWord, setCurrentWord] = useState("react")
+    const [currentWord, setCurrentWord] = useState(() => getRandomWord())
     const [guessedLetters, setGuessedLetters] = useState(new Set())
     const [recentLetter, setRecentLetter] = useState("");
 
@@ -39,12 +40,16 @@ export default function AssemblyEndgame() {
 
     const displayLetters = currentWord.split('').map((letter, i) => {
       let showLetter = false;
-      if(guessedLetters.has(letter)){
+      if(guessedLetters.has(letter) || isGameLost){
         showLetter = true
       }
 
+      const letterClassName = clsx(
+        isGameLost && !guessedLetters.has(letter) && "missed-letter"
+      )
+
       return (
-        <span key={i}>
+        <span key={i} className={letterClassName}>
           {showLetter ? letter.toUpperCase() : ""}
         </span>
       )
@@ -113,8 +118,15 @@ export default function AssemblyEndgame() {
         }
     }
 
+    function resetGame() {
+      setCurrentWord(getRandomWord())
+      setGuessedLetters(new Set())
+      setRecentLetter("")
+    }
+
     return (
         <main>
+            {isGameWon && <Confetti />}
             <header>
                 <h1>Assembly: Endgame</h1>
                 <p>Guess the word within 8 attempts to keep the 
@@ -135,7 +147,7 @@ export default function AssemblyEndgame() {
             <section className="keyboard">
               {keyboard}
             </section>
-            {isGameOver && <button className="new-game">New Game</button>}
+            {isGameOver && <button className="new-game" onClick={resetGame}>New Game</button>}
         </main>
     )
 }
