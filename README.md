@@ -62,7 +62,3 @@ assembly-endgame/
 2. Create a new branch for your feature or bug fix
 3. Submit a pull request with a clear description
 
-## License
-
-This project is distributed under the MIT License. See `LICENSE` (if present) for details.
-
